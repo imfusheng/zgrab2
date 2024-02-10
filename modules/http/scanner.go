@@ -53,6 +53,7 @@ type Flags struct {
 	RetryHTTPS      bool   `long:"retry-https" description:"If the initial request fails, reconnect and try with HTTPS."`
 	MaxSize         int    `long:"max-size" default:"256" description:"Max kilobytes to read in response to an HTTP request"`
 	MaxRedirects    int    `long:"max-redirects" default:"0" description:"Max number of redirects to follow"`
+	HTTPHost string `long:"http-host" description:"Set a custom Host header"`
 
 	// FollowLocalhostRedirects overrides the default behavior to return
 	// ErrRedirLocalhost whenever a redirect points to localhost.
@@ -508,6 +509,10 @@ func (scan *scan) Grab() *zgrab2.ScanError {
 		// to set the Accept header
 		request.Header.Set("Accept", "*/*")
 	}
+	if scan.scanner.config.HTTPHost != "" {
+		request.Host = scan.scanner.config.HTTPHost
+
+	}
 
 	resp, err := scan.client.Do(request)
 	if resp != nil && resp.Body != nil {
@@ -640,3 +645,4 @@ func RegisterModule() {
 		log.Fatal(err)
 	}
 }
+
